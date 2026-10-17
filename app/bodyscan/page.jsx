@@ -14,7 +14,12 @@ const BodyScanCamera = dynamic(() => import('../../components/BodyScanCamera'), 
 })
 
 const DETECTED_TO_SCAN_DELAY_MS = 2500
-const MAX_SCAN_DURATION_MS = 20000
+const DEFAULT_SCAN_RESULT = {
+  bodyType: 'Naturally Radiant',
+  bodyBlurb: 'A glow that does not need any filters.',
+  posture: 'Good',
+  symmetry: 92,
+}
 
 export default function BodyScan() {
   const [phase, setPhase] = useState('intro')
@@ -26,7 +31,6 @@ export default function BodyScan() {
   const phaseRef = useRef('intro')
   const lastPoseRef = useRef(null)
 
-  const scanStartRef = useRef(null)
   const rafRef = useRef(null)
   const targetPercentRef = useRef(0)
   const percentRef = useRef(0)
@@ -110,7 +114,6 @@ export default function BodyScan() {
   useEffect(() => {
     if (phase !== 'scanning') return
 
-    scanStartRef.current = Date.now()
     targetPercentRef.current = 0
     percentRef.current = 0
     finishedRef.current = false
@@ -127,9 +130,7 @@ export default function BodyScan() {
     }
 
     function tick() {
-      const elapsed = Date.now() - scanStartRef.current
-      const timeFallback = Math.min(100, (elapsed / MAX_SCAN_DURATION_MS) * 100)
-      const target = Math.max(targetPercentRef.current, timeFallback)
+      const target = targetPercentRef.current
 
       percentRef.current += (target - percentRef.current) * 0.1
       if (target >= 100 && percentRef.current > 98) {
@@ -156,13 +157,24 @@ export default function BodyScan() {
 
   async function finishScan() {
     setPhase('complete')
-    const res = await fetch('/api/bodyscan', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ completed: true }),
-    })
-    const data = await res.json()
-    setResult(data)
+    setResult(DEFAULT_SCAN_RESULT)
+
+    try {
+      const res = await fetch('/api/bodyscan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed: true }),
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        if (data?.bodyType && data?.bodyBlurb) {
+          setResult(data)
+        }
+      }
+    } catch {
+      // The scan is considered complete even if the optional result request fails.
+    }
   }
 
   function startPositioning() {
