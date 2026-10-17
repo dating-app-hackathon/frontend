@@ -1,0 +1,54 @@
+.spectrum {
+  position: relative;
+  height: 56px;
+  border-radius: 999px;
+  touch-action: none;
+  cursor: pointer;
+  user-select: none;
+}
+
+.spectrum-dim {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  background: rgba(11, 11, 13, 0.7);
+  pointer-events: none;
+}
+.spectrum-dim:first-child { border-radius: 999px 0 0 999px; }
+.spectrum-dim:nth-child(2) { border-radius: 0 999px 999px 0; }
+
+.spectrum-thumb {
+  position: absolute;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 4px solid var(--paper);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  transform: translate(-50%, -50%);
+  transition: transform 0.15s;
+}
+.spectrum-thumb:focus-visible { outline: 3px solid var(--paper); outline-offset: 3px; }
+.spectrum:active .spectrum-thumb { transform: translate(-50%, -50%) scale(1.12); }
+
+/* "every colour" mode: the whole bar glows and shimmers */
+.spectrum.every {
+  background-size: 200% 100% !important; /* beat the inline shorthand */
+  animation: shimmer 3s linear infinite;
+  box-shadow: 0 0 24px rgba(253, 66, 105, 0.5), 0 0 24px rgba(66, 140, 253, 0.5);
+}
+.spectrum.every::after {
+  content: 'every colour';
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+@keyframes shimmer { to { background-position: -200% 0; } }

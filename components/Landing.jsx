@@ -81,7 +81,7 @@ export default function Landing() {
       </p>
 
       <div className="cta-bar">
-        <Link href="/signup" className="cta">
+        <Link href="/intro" className="cta">
           Start Vibin' <span>→</span>
         </Link>
       </div>
