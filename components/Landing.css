@@ -2,7 +2,7 @@
   min-height: 100vh;
   padding-bottom: 120px;
   background:
-    radial-gradient(circle at 85% 8%, rgba(253, 66, 105, 0.35), transparent 45%),
+    radial-gradient(circle at 85% 8%, rgba(253, 66, 105, 0.17), transparent 45%),
     var(--ink);
 }
 
@@ -163,7 +163,7 @@
 .manifesto article {
   display: flex;
   gap: 16px;
-  border-top: 1px solid #2a2a30;
+  border-top: 1px solid var(--line);
   padding-top: 20px;
 }
 .manifesto .num {

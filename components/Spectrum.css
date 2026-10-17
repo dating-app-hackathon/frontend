@@ -11,7 +11,7 @@
   position: absolute;
   top: 0;
   bottom: 0;
-  background: rgba(11, 11, 13, 0.7);
+  background: rgba(251, 247, 244, 0.75);
   pointer-events: none;
 }
 .spectrum-dim:first-child { border-radius: 999px 0 0 999px; }
@@ -23,8 +23,8 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  border: 4px solid var(--paper);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  border: 4px solid #fff;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   transform: translate(-50%, -50%);
   transition: transform 0.15s;
 }
@@ -48,7 +48,7 @@
   font-size: 14px;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--ink);
+  color: #16161a;
 }
 
 @keyframes shimmer { to { background-position: -200% 0; } }

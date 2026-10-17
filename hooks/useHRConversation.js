@@ -1,83 +1,84 @@
 'use client'
 
-import { useRef, useState, useCallback } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { voice } from '@/lib/voice'
 
-const HR_QUESTIONS = [
-  "Hi! I'm so glad you're here. Let's start simple — what's something you're genuinely passionate about?",
-  "That's great to hear. What does a perfect weekend look like for you?",
-  "Nice. How would your friends describe your personality in three words?",
-  "Interesting! What's something that instantly makes you trust someone?",
-  "Got it. And what are you hoping to find here — something casual, or something more serious?",
-  "Thanks so much for sharing all of that with me — that's everything I needed!",
-]
-
+// Runs the interview: speak a question, listen to the answer, repeat.
+// Questions come from /api/interview, voice from lib/voice.
 export function useHRConversation() {
-  const [state, setState] = useState('idle') // idle | speaking | listening | thinking
-  const [transcript, setTranscript] = useState('')
+  const [state, setState] = useState('idle') // idle | speaking | listening | thinking | done
   const [aiText, setAiText] = useState('')
-  const indexRef = useRef(0)
+  const [step, setStep] = useState(0)
+  const [total, setTotal] = useState(0)
+  const [result, setResult] = useState(null)
+  const runRef = useRef(0) // bumping this cancels the running conversation
 
-  const speak = useCallback((text) => {
-    return new Promise((resolve) => {
+  const stop = useCallback(() => {
+    runRef.current++
+    voice.stop()
+    setState('idle')
+    setAiText('')
+  }, [])
+
+  // Testing shortcut: end the conversation now and jump straight to a result
+  const skip = useCallback(async () => {
+    runRef.current++
+    voice.stop()
+    setState('thinking')
+    const res = await fetch('/api/interview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers: {} }),
+    }).then((r) => r.json())
+    setResult(res)
+    setState('done')
+  }, [])
+
+  useEffect(() => () => {
+    runRef.current++
+    voice.stop()
+  }, [])
+
+  const start = useCallback(async () => {
+    const run = ++runRef.current
+    const alive = () => run === runRef.current
+
+    setResult(null)
+    setState('thinking')
+    const { questions, outro } = await fetch('/api/interview').then((r) => r.json())
+    setTotal(questions.length)
+
+    const answers = {}
+    for (const [i, q] of questions.entries()) {
+      if (!alive()) return
+      setStep(i)
+      setAiText(q.text)
       setState('speaking')
-      setAiText(text)
-      const utterance = new SpeechSynthesisUtterance(text)
-      utterance.onend = resolve
-      window.speechSynthesis.speak(utterance)
-    })
-  }, [])
+      await voice.speak(q.text)
 
-  const listen = useCallback(() => {
-    return new Promise((resolve) => {
-      const SpeechRecognitionAPI =
-        window.SpeechRecognition || window.webkitSpeechRecognition
-
-      if (!SpeechRecognitionAPI) {
-        resolve('(speech recognition not supported in this browser)')
-        return
-      }
-
-      const recognition = new SpeechRecognitionAPI()
-      recognition.lang = 'en-US'
-      recognition.interimResults = true
-
-      let finalText = ''
-      recognition.onresult = (event) => {
-        let interim = ''
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const text = event.results[i][0].transcript
-          event.results[i].isFinal ? (finalText += text) : (interim += text)
-        }
-        setTranscript(finalText || interim)
-      }
-
-      recognition.onend = () => resolve(finalText.trim() || '(no response detected)')
-
+      if (!alive()) return
       setState('listening')
-      setTranscript('')
-      recognition.start()
-    })
-  }, [])
-
-  const runTurn = useCallback(async () => {
-    const question = HR_QUESTIONS[indexRef.current]
-    await speak(question)
-
-    const isLast = indexRef.current === HR_QUESTIONS.length - 1
-    if (isLast) {
-      setState('idle')
-      return
+      answers[q.id] = await voice.listen()
+      setState('thinking')
     }
 
-    await listen()
-    indexRef.current += 1
-    runTurn()
-  }, [speak, listen])
+    if (!alive()) return
+    const res = await fetch('/api/interview', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ answers }),
+    }).then((r) => r.json())
 
-  const start = useCallback(() => {
-    indexRef.current = 0
-    runTurn()
-  }, [runTurn])
+    setStep(questions.length)
+    setAiText(outro)
+    setState('speaking')
+    await voice.speak(outro)
 
-  return { state, transcript, aiText, start }
+    if (!alive()) return
+    voice.stop() // let go of the mic
+    setResult(res)
+    setState('done')
+  }, [])
+
+  return { state, aiText, step, total, result, start, stop, skip }
 }

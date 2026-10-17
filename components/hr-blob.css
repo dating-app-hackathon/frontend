@@ -1,86 +1,73 @@
 .hr-blob-wrap {
   position: relative;
-  width: 160px;
-  height: 160px;
+  width: 220px;
+  height: 220px;
   margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
 }
+.hr-blob-wrap > * { grid-area: 1 / 1; }
 
 .hr-blob {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 30% 30%, #7df9c0, #2b8f6e 70%);
-  filter: blur(0.5px);
-  animation: breathe 4s ease-in-out infinite;
-  transition: transform 0.2s ease;
+  width: 150px;
+  height: 150px;
+  border-radius: 42% 58% 55% 45% / 50% 40% 60% 50%;
+  background: radial-gradient(circle at 30% 25%, #ffc2cf, var(--pink) 55%, #b0123a);
+  box-shadow: inset -10px -14px 30px rgba(0, 0, 0, 0.25);
+  animation: morph 6s ease-in-out infinite, breathe 4s ease-in-out infinite;
+  transition: background 0.4s, width 0.4s, height 0.4s;
 }
 
 .hr-blob-glow {
-  position: absolute;
-  width: 160px;
-  height: 160px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(125, 249, 192, 0.35), transparent 70%);
-  animation: pulseGlow 4s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(253, 66, 105, 0.45), transparent 65%);
+  animation: breathe 4s ease-in-out infinite;
 }
 
-@keyframes breathe {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+.hr-ring {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 2px solid var(--pink);
+  opacity: 0;
 }
 
-@keyframes pulseGlow {
-  0%, 100% { opacity: 0.4; transform: scale(1); }
-  50% { opacity: 0.7; transform: scale(1.15); }
-}
+/* speaking: fast, bouncy, hot */
+.hr-blob-wrap.speaking .hr-blob { animation: morph 1.2s ease-in-out infinite, talk 0.45s ease-in-out infinite alternate; }
+.hr-blob-wrap.speaking .hr-blob-glow { animation: breathe 0.9s ease-in-out infinite; }
 
-.hr-blob-wrap.speaking .hr-blob {
-  animation: speakPulse 0.6s ease-in-out infinite;
-  background: radial-gradient(circle at 30% 30%, #9dffda, #1fae7a 70%);
-}
-@keyframes speakPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
-}
-
+/* listening: cool and calm, with ripples going out */
 .hr-blob-wrap.listening .hr-blob {
-  background: radial-gradient(circle at 30% 30%, #9ecbff, #2b5f9f 70%);
-  animation: listenPulse 1.2s ease-in-out infinite;
+  width: 130px;
+  height: 130px;
+  background: radial-gradient(circle at 30% 25%, #ffe6ec, #ffb3c4 55%, #e58aa0);
+  animation: morph 4s ease-in-out infinite;
 }
-@keyframes listenPulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.08); }
-}
+.hr-blob-wrap.listening .hr-blob-glow { background: radial-gradient(circle, rgba(253, 66, 105, 0.15), transparent 65%); }
+.hr-blob-wrap.listening .hr-ring { animation: ripple 2s ease-out infinite; }
+.hr-blob-wrap.listening .hr-ring:nth-child(2) { animation-delay: 1s; }
 
+/* thinking: purple, spinning */
 .hr-blob-wrap.thinking .hr-blob {
-  background: radial-gradient(circle at 30% 30%, #ffd98e, #b5802a 70%);
-  animation: thinkPulse 0.9s ease-in-out infinite;
+  background: radial-gradient(circle at 30% 25%, #e6c8ff, #a24bff 55%, #5b1aa8);
+  animation: morph 1.5s ease-in-out infinite, spin 2s linear infinite;
 }
-@keyframes thinkPulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
+.hr-blob-wrap.thinking .hr-blob-glow { background: radial-gradient(circle, rgba(162, 75, 255, 0.4), transparent 65%); }
 
-.hr-state-label {
-  text-align: center;
-  font-size: 13px;
-  color: #888;
-  margin-top: 8px;
+@keyframes morph {
+  50% { border-radius: 58% 42% 45% 55% / 40% 60% 40% 60%; }
 }
-
-.hr-ai-text {
-  text-align: center;
-  font-style: italic;
-  margin-top: 12px;
-  color: #ddd;
+@keyframes breathe {
+  50% { transform: scale(1.06); }
 }
-
-.hr-transcript {
-  text-align: center;
-  margin-top: 6px;
-  color: #00ff88;
-  font-size: 14px;
+@keyframes talk {
+  from { transform: scale(0.96, 1.02); }
+  to { transform: scale(1.1, 0.94); }
 }
+@keyframes ripple {
+  from { transform: scale(0.9); opacity: 0.6; }
+  to { transform: scale(1.6); opacity: 0; }
+}
+@keyframes spin { to { rotate: 360deg; } }

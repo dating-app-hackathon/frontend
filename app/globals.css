@@ -1,10 +1,15 @@
 :root {
   --pink: #fd4269;
   --pink-soft: #ff8aa3;
-  --ink: #0b0b0d;
-  --ink-2: #16161a;
-  --paper: #f7f3ee;
-  --muted: #8a8790;
+  /* light mode: --ink is the page, --paper the text (names kept from the dark version) */
+  --ink: #fbf7f4;
+  --ink-2: #ffffff;
+  --paper: #16161a;
+  --muted: #7a7480;
+  --line: #ece5e1;
+  --line-2: #ddd5d0;
+  --chip: #f6eef1;
+  --placeholder: #b8b0b5;
   --display: 'Unbounded', system-ui, sans-serif;
   --body: 'Space Grotesk', system-ui, sans-serif;
 }
@@ -14,7 +19,8 @@
 html, body, #root { height: 100%; }
 
 body {
-  background: #000;
+  background: #efe9e5;
+  color-scheme: light;
   color: var(--paper);
   font-family: var(--body);
   -webkit-font-smoothing: antialiased;

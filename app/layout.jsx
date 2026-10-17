@@ -9,7 +9,7 @@ export const viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#0b0b0d',
+  themeColor: '#fbf7f4',
 }
 
 const FONTS =

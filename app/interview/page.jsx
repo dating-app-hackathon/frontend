@@ -1,131 +1,157 @@
 'use client'
 
-// /interview: wireframe only. Swap the placeholder blocks for the real UI.
-// Data comes from the mock API in app/api/interview/route.js.
+// /interview: a live voice "vibe check". The interviewer blob asks questions out loud,
+// the person answers by talking. Conversation logic lives in hooks/useHRConversation,
+// the speech engine in lib/voice, camera/mic analysis in components/LiveStreamPanel,
+// simulated EEG in components/EEGPanel + lib/eeg.
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import HRBlob from '@/components/HRBlob'
+import EEGPanel from '@/components/EEGPanel'
+import HeartRate from '@/components/HeartRate'
+import { useHRConversation } from '@/hooks/useHRConversation'
+import '@/components/hr-blob.css'
 import './interview.css'
 
-import HRBlob from '../../components/HRBlob'
-import { useHRConversation } from '../../hooks/useHRConversation'
-import '../../components/hr-blob.css'
+const LiveStreamPanel = dynamic(() => import('@/components/LiveStreamPanel'), { ssr: false })
 
+const DEV = process.env.NODE_ENV === 'development'
 
-const LiveStreamPanel = dynamic(() => import('../../components/LiveStreamPanel'), {
-  ssr: false,
-})
-
-function VirtualHRSection() {
-  const { state, transcript, aiText, start } = useHRConversation()
-  const [started, setStarted] = useState(false)
-
-  return (
-    <section className="iv-box iv-hr">
-      <HRBlob state={state} />
-
-      <p className="hr-state-label">
-        {state === 'speaking' && 'HR is speaking...'}
-        {state === 'listening' && 'Listening — go ahead...'}
-        {state === 'thinking' && 'Thinking...'}
-        {state === 'idle' && !started && 'Ready to begin'}
-      </p>
-
-      {aiText && <p className="hr-ai-text">"{aiText}"</p>}
-      {transcript && <p className="hr-transcript">You: {transcript}</p>}
-
-      {!started && (
-        <button
-          className="iv-next"
-          onClick={() => {
-            setStarted(true)
-            start()
-          }}
-        >
-          Start Conversation
-        </button>
-      )}
-    </section>
-  )
+const STATE_LABEL = {
+  speaking: 'Talking…',
+  listening: 'Your turn, go ahead',
+  thinking: 'Hmm…',
 }
 
+const CHECKLIST = [
+  ['🎙️', 'Mic on', "It's a conversation, not a form."],
+  ['📷', 'Camera on', 'We read the vibe, not your looks.'],
+  ['🤫', 'Somewhere quiet-ish', 'Five questions, about three minutes.'],
+]
+
 export default function Interview() {
-  const [questions, setQuestions] = useState([])
-  const [step, setStep] = useState(0)
-  const [answers, setAnswers] = useState({})
-  const [result, setResult] = useState(null)
+  const { state, aiText, step, total, result, start, stop, skip } = useHRConversation()
+  const [started, setStarted] = useState(false)
+  const live = started && state !== 'done'
 
+  // Dev-only escape hatch: Esc (or the skip button) jumps to the result
   useEffect(() => {
-    fetch('/api/interview')
-      .then((r) => r.json())
-      .then((d) => setQuestions(d.questions))
-  }, [])
+    if (!DEV || !live) return
+    const onKey = (e) => e.key === 'Escape' && skip()
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [live, skip])
 
-  const q = questions[step]
-  const isLast = step === questions.length - 1
+  function begin() {
+    setStarted(true)
+    start()
+  }
 
-  async function next() {
-    if (!isLast) return setStep(step + 1)
-    const res = await fetch('/api/interview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers }),
-    })
-    setResult(await res.json())
+  function end() {
+    stop()
+    setStarted(false)
   }
 
   return (
-    <main className="interview">
+    <main className={`interview ${live ? 'live' : ''} ${!started ? 'intro' : ''}`}>
       <header className="iv-top">
-        <Link href="/" className="iv-back">←</Link>
-        <span className="iv-title">Interview</span>
-        <span className="iv-count">{questions.length ? `${step + 1}/${questions.length}` : ''}</span>
+        <Link href="/bio" className="iv-back">←</Link>
+        {live ? (
+          <span className="iv-live">
+            <i /> LIVE
+          </span>
+        ) : (
+          <span className="iv-title">Vibe check</span>
+        )}
+        <span className="iv-count">{live && total ? `${Math.min(step + 1, total)}/${total}` : ''}</span>
       </header>
 
+      {/* always rendered (empty before the call) so the sphere doesn't jump when it starts */}
       <div className="iv-progress">
-        <span style={{ width: `${questions.length ? ((step + 1) / questions.length) * 100 : 0}%` }} />
+        {live &&
+          Array.from({ length: total }, (_, i) => (
+            <span key={i} className={i < step ? 'done' : i === step ? 'now' : ''} />
+          ))}
       </div>
 
-      <VirtualHRSection />
+      <section className="iv-stage">
+        <HRBlob state={live ? state : result ? 'speaking' : 'idle'} />
+        {live && <p className="iv-state">{STATE_LABEL[state]}</p>}
+      </section>
 
-      {result ? (
-        <section className="iv-box iv-result">
-          <small>[ RESULT ]</small>
-          <h2>{result.vibe}</h2>
-          <p>{result.answered} answers sent</p>
-        </section>
-      ) : !q ? (
-        <p className="iv-loading">loading…</p>
-      ) : (
-        <>
-          <section className="iv-box iv-media">[ VISUAL / AVATAR / ANIMATION ]</section>
-
-          <section className="iv-question">
-            <small>[ QUESTION ]</small>
-            <h2>{q.text}</h2>
-          </section>
-
-          <section className="iv-options">
-            {q.options.map((opt) => (
-              <button
-                key={opt}
-                className={`iv-option ${answers[q.id] === opt ? 'selected' : ''}`}
-                onClick={() => setAnswers({ ...answers, [q.id]: opt })}
-              >
-                {opt}
-              </button>
+      {!started && (
+        <section className="iv-intro">
+          <h1>
+            Let's talk.
+            <br />
+            <span className="pink">For real.</span>
+          </h1>
+          <p>No right answers. We just want to hear the real you, out loud.</p>
+          <ul>
+            {CHECKLIST.map(([emoji, title, sub]) => (
+              <li key={title}>
+                <span>{emoji}</span>
+                <div>
+                  <strong>{title}</strong>
+                  <small>{sub}</small>
+                </div>
+              </li>
             ))}
-          </section>
-
-          <div className="iv-footer">
-            <button className="iv-next" disabled={!answers[q.id]} onClick={next}>
-              {isLast ? 'Finish' : 'Next'}
-            </button>
-          </div>
-        </>
+          </ul>
+        </section>
       )}
-      <LiveStreamPanel />
+
+      {live && (
+        <section className="iv-talk">
+          {aiText && (
+            <p key={aiText} className="iv-caption">
+              {aiText}
+            </p>
+          )}
+        </section>
+      )}
+
+      {live && <LiveStreamPanel />}
+      {live && <HeartRate />}
+      {live && <EEGPanel focused={state === 'listening'} />}
+
+      {state === 'done' && result && (
+        <section className="iv-result">
+          <span className="iv-result-emoji">{result.emoji}</span>
+          <small>your vibe</small>
+          <h2>{result.vibe}</h2>
+          <p>{result.description}</p>
+          <div className="iv-meter">
+            <span style={{ width: `${result.sync}%` }} />
+          </div>
+          <small>{result.sync}% ready to sync</small>
+        </section>
+      )}
+
+      <div className="cta-bar">
+        {!started && (
+          <button className="cta" onClick={begin}>
+            Start the vibe check <span>→</span>
+          </button>
+        )}
+        {live && DEV && (
+          <button className="iv-skip" onClick={skip}>
+            Skip to result ⏭ <kbd>esc</kbd>
+          </button>
+        )}
+        {live && (
+          <button className="iv-end" onClick={end} aria-label="End the vibe check">
+            ✕
+          </button>
+        )}
+        {state === 'done' && (
+          <Link href="/syncs" className="cta">
+            Find my sync <span>→</span>
+          </Link>
+        )}
+      </div>
     </main>
   )
 }

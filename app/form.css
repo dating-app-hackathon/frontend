@@ -7,7 +7,7 @@
   flex-direction: column;
   gap: 32px;
   background:
-    radial-gradient(circle at 100% 0%, rgba(253, 66, 105, 0.25), transparent 45%),
+    radial-gradient(circle at 100% 0%, rgba(253, 66, 105, 0.12), transparent 45%),
     var(--ink);
 }
 
@@ -40,14 +40,14 @@
   color: var(--paper);
   background: none;
   border: 0;
-  border-bottom: 2px solid #3a3a42;
+  border-bottom: 2px solid var(--line-2);
   padding: 8px 0;
   outline: none;
-  color-scheme: dark;
+  color-scheme: light;
   transition: border-color 0.2s;
 }
 .field input:focus { border-bottom-color: var(--pink); }
-.field input::placeholder { color: #4a4a52; }
+.field input::placeholder { color: var(--placeholder); }
 
 .field-hint { font-size: 14px; color: var(--pink-soft); }
 .field-hint.error { color: var(--pink); }
@@ -57,7 +57,7 @@
 .chip {
   flex-shrink: 0;
   padding: 10px 14px;
-  border: 1.5px solid #3a3a42;
+  border: 1.5px solid var(--line-2);
   border-radius: 999px;
   font-size: 14px;
   transition: all 0.15s;

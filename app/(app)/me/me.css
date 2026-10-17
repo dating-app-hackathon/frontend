@@ -1,0 +1,47 @@
+.me-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding-top: 12px;
+}
+.me-hero .avatar { box-shadow: 0 0 0 4px var(--ink), 0 0 0 6px var(--pink), 0 12px 40px rgba(253, 66, 105, 0.35); }
+.me-hero .app-lead { margin-top: -4px; }
+
+.me-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+/* ---------- vibe ---------- */
+.me-vibe {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(253, 66, 105, 0.25), var(--ink-2) 70%);
+  border-color: rgba(253, 66, 105, 0.4);
+}
+.me-vibe-emoji { font-size: 40px; }
+.me-vibe small { font-size: 11px; color: var(--pink); text-transform: uppercase; letter-spacing: 1px; font-weight: 700; }
+.me-vibe h2 { font-family: var(--display); font-weight: 900; font-size: 18px; text-transform: uppercase; }
+.me-vibe p { color: var(--muted); font-size: 14px; margin-top: 2px; }
+
+.me-bio { font-size: 16px; line-height: 1.5; white-space: pre-line; }
+
+/* ---------- details ---------- */
+.me-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.me-tile { padding: 14px 16px; border-radius: 20px; }
+.me-tile .me-label { margin-bottom: 4px; }
+.me-tile p { font-weight: 500; }
+
+/* ---------- colours ---------- */
+.me-colours { display: grid; gap: 18px; }
+.me-shade { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-weight: 800; font-size: 15px; }
+.me-shade span { width: 28px; height: 28px; border-radius: 50%; }
+.me-range { height: 14px; border-radius: 999px; margin-bottom: 6px; }
+.me-colours small { color: var(--muted); font-size: 13px; }

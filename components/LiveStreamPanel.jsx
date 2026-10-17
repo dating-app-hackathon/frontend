@@ -3,6 +3,8 @@
 import { useEffect, useRef, useState } from 'react'
 import * as faceapi from 'face-api.js'
 
+const EMOJI = { happy: '😊', sad: '😢', angry: '😠', fearful: '😨', disgusted: '🤢', surprised: '😮', neutral: '😐' }
+
 export default function LiveStreamPanel() {
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
@@ -12,7 +14,6 @@ export default function LiveStreamPanel() {
 
   const [modelsLoaded, setModelsLoaded] = useState(false)
   const [emotion, setEmotion] = useState(null)
-  const [gaze, setGaze] = useState(null)
   const [isSpeaking, setIsSpeaking] = useState(false)
   const [error, setError] = useState(null)
 
@@ -80,16 +81,11 @@ export default function LiveStreamPanel() {
 
         if (ctx) {
           const { x, y, width, height } = detection.detection.box
-          ctx.strokeStyle = '#00ff88'
-          ctx.lineWidth = 2
-          ctx.strokeRect(x, y, width, height)
-          ctx.fillStyle = '#00ff88'
-          ctx.font = '14px sans-serif'
-          ctx.fillText(
-            `${label} (${Math.round(score * 100)}%)`,
-            x,
-            y > 20 ? y - 6 : y + height + 16
-          )
+          ctx.strokeStyle = '#fd4269'
+          ctx.lineWidth = 3
+          ctx.beginPath()
+          ctx.roundRect(x, y, width, height, 16)
+          ctx.stroke()
         }
       } else {
         setEmotion(null)
@@ -99,32 +95,7 @@ export default function LiveStreamPanel() {
     return () => clearInterval(intervalId)
   }, [modelsLoaded])
 
-  // 4. Eye tracking with WebGazer (dynamic import — client only)
-  useEffect(() => {
-    let gazer
-
-    async function startGaze() {
-      const mod = await import('webgazer')
-      gazer = mod.default
-
-      gazer
-        .setGazeListener((data) => {
-          if (data) setGaze({ x: Math.round(data.x), y: Math.round(data.y) })
-        })
-        .showVideo(false)
-        .showFaceOverlay(false)
-        .showFaceFeedbackBox(false)
-        .showPredictionPoints(false)
-
-      await gazer.begin()
-    }
-
-    startGaze()
-
-    return () => gazer?.end()
-  }, [])
-
-  // 5. Audio visualization
+  // 4. Audio visualization
   function setupAudioAnalyser(stream) {
     const audioContext = new (window.AudioContext || window.webkitAudioContext)()
     const source = audioContext.createMediaStreamSource(stream)
@@ -148,13 +119,17 @@ export default function LiveStreamPanel() {
       const { width, height } = canvas
       ctx.clearRect(0, 0, width, height)
 
-      const barWidth = (width / bufferLength) * 2.5
-      let x = 0
-      for (let i = 0; i < bufferLength; i++) {
-        const barHeight = (dataArray[i] / 255) * height
-        ctx.fillStyle = avg > 15 ? '#00ff88' : '#555'
-        ctx.fillRect(x, height - barHeight, barWidth, barHeight)
-        x += barWidth + 1
+      // mirrored bars from the centre, pink while you talk
+      const bars = 32
+      const barWidth = width / bars / 2 - 2
+      ctx.fillStyle = avg > 15 ? '#fd4269' : '#ddd5d0'
+      for (let i = 0; i < bars; i++) {
+        const barHeight = Math.max(4, (dataArray[i * 2] / 255) * height)
+        const y = (height - barHeight) / 2
+        ctx.beginPath()
+        ctx.roundRect(width / 2 + i * (barWidth + 2), y, barWidth, barHeight, 2)
+        ctx.roundRect(width / 2 - (i + 1) * (barWidth + 2), y, barWidth, barHeight, 2)
+        ctx.fill()
       }
     }
 
@@ -162,31 +137,21 @@ export default function LiveStreamPanel() {
   }
 
   return (
-    <section className="iv-livestream">
-        <div className="iv-livestream-row">
-        <div className="iv-video-wrap">
-            <video ref={videoRef} autoPlay muted playsInline className="iv-video" />
-            <canvas ref={canvasRef} width={240} height={180} className="iv-overlay" />
+    <>
+      <div className="iv-pip">
+        <video ref={videoRef} autoPlay muted playsInline className="iv-video" />
+        <canvas ref={canvasRef} width={240} height={180} className="iv-overlay" />
+        {error && <p className="iv-error">{error}</p>}
+      </div>
 
-            <div className="iv-status-list">
-            <span className="iv-status-item">
-                ● eye…{gaze ? ` (${gaze.x}, ${gaze.y})` : ''}
-            </span>
-            <span className="iv-status-item">
-                ● {emotion ? emotion.label : 'detecting…'}
-            </span>
-            <span className="iv-status-item">
-                ● {isSpeaking ? 'voice…' : 'mic idle'}
-            </span>
-            </div>
+      <div className="iv-chips">
+        <span className={emotion ? 'on' : ''}>
+          {emotion ? `${EMOJI[emotion.label] ?? '🙂'} ${emotion.label}` : '🙂 reading you…'}
+        </span>
+        <span className={isSpeaking ? 'on' : ''}>🎙️ {isSpeaking ? 'hearing you' : 'mic on'}</span>
+      </div>
 
-            {error && <p className="iv-error">{error}</p>}
-        </div>
-
-        <div className="iv-audio-wrap">
-            <canvas ref={audioCanvasRef} width={200} height={50} className="iv-audio-canvas" />
-        </div>
-        </div>
-    </section>
-    )
+      <canvas ref={audioCanvasRef} width={780} height={96} className="iv-wave" />
+    </>
+  )
 }

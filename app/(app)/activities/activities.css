@@ -1,0 +1,59 @@
+/* ---------- sync strength ---------- */
+.act-strength { display: grid; gap: 10px; }
+.act-strength > div:first-child { display: flex; align-items: baseline; justify-content: space-between; }
+.act-strength small { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); }
+.act-strength strong { font-family: var(--display); font-size: 28px; color: var(--pink); }
+.act-strength p { color: var(--muted); font-size: 13px; }
+.act-meter { height: 10px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.act-meter span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ff8aa3, var(--pink));
+  transition: width 1s ease-out;
+}
+
+/* ---------- activity cards ---------- */
+.act-list { display: grid; gap: 12px; }
+
+.act {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: inherit;
+  text-decoration: none;
+  opacity: 0;
+  animation: act-in 0.5s ease-out forwards;
+  transition: border-color 0.2s, transform 0.15s;
+}
+.act:active { transform: scale(0.98); border-color: var(--pink); }
+
+.act-emoji {
+  width: 52px;
+  height: 52px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  font-size: 26px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, rgba(253, 66, 105, 0.3), rgba(253, 66, 105, 0.08));
+}
+.act-body { flex: 1; min-width: 0; }
+.act-body h2 { font-family: var(--display); font-weight: 800; font-size: 17px; letter-spacing: -0.3px; }
+.act-body p { color: var(--muted); font-size: 14px; line-height: 1.4; margin-top: 4px; }
+.act-boost {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: rgba(253, 66, 105, 0.15);
+  color: var(--pink);
+  font-size: 11px;
+  font-weight: 700;
+}
+.act-arrow { color: var(--pink); font-size: 20px; flex-shrink: 0; }
+
+@keyframes act-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: none; }
+}

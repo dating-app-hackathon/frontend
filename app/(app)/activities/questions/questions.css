@@ -1,0 +1,68 @@
+.q-back { color: var(--muted); text-decoration: none; font-size: 14px; }
+
+.q-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; }
+.q-score {
+  flex-shrink: 0;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(253, 66, 105, 0.15);
+  color: var(--pink);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.q-progress { display: flex; gap: 4px; }
+.q-progress span { flex: 1; height: 4px; border-radius: 4px; background: var(--line); transition: background 0.3s; }
+.q-progress .done { background: var(--pink); }
+.q-progress .now { background: var(--line-2); }
+
+.q-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  animation: q-in 0.4s ease-out;
+}
+.q-card small { color: var(--muted); font-size: 12px; letter-spacing: 1px; text-transform: uppercase; }
+.q-card h2 { font-family: var(--display); font-weight: 800; font-size: 22px; line-height: 1.2; letter-spacing: -0.5px; }
+
+.q-card textarea {
+  width: 100%;
+  padding: 14px 14px 28px;
+  border-radius: 16px;
+  border: 1.5px solid var(--line-2);
+  background: var(--ink);
+  color: var(--paper);
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.45;
+  resize: none;
+  outline: none;
+}
+.q-card textarea:focus { border-color: var(--pink); }
+.q-card textarea::placeholder { color: var(--placeholder); }
+.q-count { position: absolute; right: 30px; bottom: 82px; font-size: 11px; color: var(--muted); }
+
+.q-actions { display: flex; gap: 10px; }
+.q-skip { padding: 14px 20px; border-radius: 999px; color: var(--muted); }
+.q-send {
+  flex: 1;
+  padding: 14px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  transition: opacity 0.2s;
+}
+.q-send:disabled { opacity: 0.3; }
+
+.q-done { align-items: center; text-align: center; padding: 32px 20px; }
+.q-done > span { font-size: 44px; }
+.q-done p { color: var(--muted); }
+.q-done .cta { margin-top: 8px; text-decoration: none; }
+
+@keyframes q-in {
+  from { opacity: 0; transform: translateX(24px); }
+  to { opacity: 1; transform: none; }
+}

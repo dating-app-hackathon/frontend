@@ -1,0 +1,47 @@
+.bio-box {
+  position: relative;
+  border: 1.5px solid var(--line-2);
+  border-radius: 20px;
+  background: var(--ink-2);
+  transition: border-color 0.2s;
+}
+.bio-box:focus-within { border-color: var(--pink); }
+
+.bio-box textarea {
+  display: block;
+  width: 100%;
+  padding: 18px 18px 56px;
+  font: inherit;
+  font-size: 17px;
+  line-height: 1.5;
+  color: var(--paper);
+  background: none;
+  border: 0;
+  outline: none;
+  resize: none;
+}
+.bio-box textarea::placeholder { color: var(--placeholder); }
+
+/* ---------- circular counter ---------- */
+.bio-counter {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.bio-counter svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.bio-counter circle { fill: none; stroke-width: 3; }
+.bio-counter .track { stroke: var(--line); }
+.bio-counter .fill {
+  stroke: var(--paper);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.15s, stroke 0.2s;
+}
+.bio-counter.warn { color: var(--pink); }
+.bio-counter.warn .fill { stroke: var(--pink); }
