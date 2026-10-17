@@ -1,0 +1,42 @@
+.au-left { font-size: 14px; transition: all 0.2s; }
+.au-left.zero { background: var(--pink); color: #fff; }
+
+.au-list { display: grid; gap: 10px; padding-bottom: 80px; }
+
+.au-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; transition: border-color 0.2s; }
+.au-item.bid { border-color: rgba(253, 66, 105, 0.45); }
+.au-emoji { font-size: 26px; flex-shrink: 0; }
+.au-body { flex: 1; min-width: 0; display: grid; gap: 8px; }
+.au-body strong { font-size: 14px; font-weight: 700; line-height: 1.25; }
+.au-bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.au-bar span { display: block; height: 100%; border-radius: 999px; background: var(--pink); transition: width 0.25s ease-out; }
+
+.au-controls { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.au-controls b { font-family: var(--display); font-size: 15px; min-width: 2.2ch; text-align: center; font-variant-numeric: tabular-nums; }
+.au-controls button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--chip);
+  font-size: 18px;
+  font-weight: 700;
+  transition: opacity 0.2s, transform 0.1s;
+}
+.au-controls button:active { transform: scale(0.9); }
+.au-controls button:disabled { opacity: 0.3; }
+
+/* sits above the tab bar */
+.au-cta { bottom: calc(64px + env(safe-area-inset-bottom)); background: none; }
+.au-cta .cta:disabled { opacity: 0.45; box-shadow: none; }
+
+/* ---------- result ---------- */
+.au-result { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 28px 20px; }
+.au-result-emoji { font-size: 48px; }
+.au-result small { color: var(--pink); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.au-result h2 { font-family: var(--display); font-weight: 900; font-size: 24px; text-transform: uppercase; letter-spacing: -0.5px; }
+.au-ranked { list-style: none; width: 100%; display: grid; gap: 6px; margin: 12px 0 4px; }
+.au-ranked li { display: flex; justify-content: space-between; gap: 10px; padding: 10px 14px; border-radius: 14px; background: var(--chip); font-size: 14px; text-align: left; }
+.au-ranked b { font-family: var(--display); }
+.au-ranked b::before { content: '🪙 '; }
+.au-lost { font-size: 13px; color: var(--muted); line-height: 1.4; margin-bottom: 8px; }
+.au-result .cta { text-decoration: none; }

@@ -1,0 +1,47 @@
+.dl-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 28px 20px 20px;
+  text-align: center;
+  animation: q-in 0.35s ease-out;
+}
+.dl-card h2 { font-family: var(--display); font-weight: 800; font-size: 21px; line-height: 1.25; letter-spacing: -0.4px; }
+
+.dl-timer { position: relative; width: 60px; height: 60px; display: grid; place-items: center; }
+.dl-timer svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+.dl-timer circle { fill: none; stroke-width: 4; }
+.dl-timer .track { stroke: var(--line); }
+.dl-timer .fill { stroke: var(--pink); stroke-linecap: round; transition: stroke-dashoffset 0.1s linear; }
+.dl-timer span { font-family: var(--display); font-weight: 800; font-size: 20px; }
+.dl-timer.hurry span { color: var(--pink); animation: dl-pulse 0.5s ease-in-out infinite alternate; }
+
+.dl-choices { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.dl-choices button {
+  padding: 18px 10px;
+  border-radius: 18px;
+  border: 1.5px solid var(--line-2);
+  background: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 15px;
+  transition: all 0.15s;
+}
+.dl-choices button:active { transform: scale(0.96); border-color: var(--pink); background: var(--pink); color: #fff; }
+.dl-note { color: var(--muted); font-size: 12px; }
+
+/* ---------- result ---------- */
+.dl-result { display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; padding: 28px 20px; }
+.dl-result-emoji { font-size: 48px; }
+.dl-result small { color: var(--pink); font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+.dl-result h2 { font-family: var(--display); font-weight: 900; font-size: 28px; text-transform: uppercase; letter-spacing: -0.5px; }
+.dl-result > p { color: var(--muted); }
+.dl-stats { width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 12px 0 4px; }
+.dl-stats div { padding: 12px; border-radius: 16px; background: var(--chip); }
+.dl-stats dt { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+.dl-stats dd { font-family: var(--display); font-weight: 800; font-size: 22px; }
+.dl-fastest { font-size: 14px; line-height: 1.4; margin-bottom: 8px; }
+.dl-result .cta { text-decoration: none; }
+
+@keyframes dl-pulse { to { transform: scale(1.15); } }

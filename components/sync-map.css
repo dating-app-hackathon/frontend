@@ -1,0 +1,74 @@
+/* Light-surface chart (top of the Syncs page) */
+.syncmap { display: grid; gap: 12px; }
+
+.syncmap-plot {
+  position: relative;
+  border-radius: 20px;
+  background: #fcfaf9;
+  border: 1px solid #efe9e6;
+  overflow: hidden;
+}
+.syncmap svg { display: block; width: 100%; height: auto; touch-action: manipulation; cursor: pointer; }
+
+.syncmap-dots circle {
+  opacity: 0.8;
+  stroke: #fcfaf9; /* 1px surface ring so overlapping dots stay separate */
+  stroke-width: 1;
+  transition: transform 1.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.syncmap text {
+  font-family: var(--body);
+  paint-order: stroke;
+  stroke: #fcfaf9;
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+.syncmap-cluster { font-size: 9px; font-weight: 500; fill: #6b6570; text-anchor: middle; }
+.syncmap-name { font-size: 10px; font-weight: 700; fill: #16161a; }
+
+/* you + them appear once the dots have settled */
+.syncmap-pair { opacity: 0; transition: opacity 0.5s 1.5s; }
+.syncmap-pair.on { opacity: 1; }
+.syncmap-pair line { stroke: var(--pink); stroke-width: 1.5; stroke-dasharray: 3 3; }
+.syncmap-you { fill: var(--pink); stroke: #fff; stroke-width: 2; }
+.syncmap-them { fill: #16161a; stroke: #fff; stroke-width: 2; }
+.syncmap-ping {
+  fill: none;
+  stroke: var(--pink);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: syncmap-ping 1.8s ease-out infinite;
+}
+
+.syncmap-tip {
+  position: absolute;
+  transform: translate(-50%, calc(-100% - 10px));
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: #16161a;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.syncmap-legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  font-size: 12px;
+  color: #4d4852;
+}
+.syncmap-legend li { display: flex; align-items: center; gap: 5px; }
+.syncmap-legend i { width: 8px; height: 8px; border-radius: 50%; }
+.syncmap figcaption strong { color: #16161a; }
+.syncmap figcaption p { margin-top: 8px; font-size: 12px; line-height: 1.4; color: #7a7480; }
+
+@keyframes syncmap-ping {
+  from { transform: scale(1); opacity: 0.8; }
+  to { transform: scale(2.6); opacity: 0; }
+}
