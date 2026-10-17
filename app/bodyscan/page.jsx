@@ -5,6 +5,10 @@ import Link from 'next/link'
 import dynamic from 'next/dynamic'
 import './bodyscan.css'
 
+import ScanResultIllustration from '../../components/ScanResultIllustration'
+import ScanStatsGrid from '../../components/ScanStatsGrid'
+
+
 import BodyFigureProgress from '../../components/BodyFigureProgress'
 
 const BodyScanCamera = dynamic(() => import('../../components/BodyScanCamera'), {
@@ -221,20 +225,30 @@ export default function BodyScan() {
         )}
 
         {phase === 'complete' && (
-          <section className="bs-box bs-complete">
-            <div className="bs-success-circle">
-              <span className="bs-success-check">✓</span>
-            </div>
-            <h2>Scan complete!</h2>
-            {result ? (
-              <>
-                <p className="bs-complete-label">Body type detected</p>
-                <div className="bs-result-badge">{result.bodyType}</div>
-              </>
-            ) : (
-              <p className="bs-complete-label">Processing results…</p>
-            )}
-          </section>
+            <section className="bs-box bs-complete">
+                <ScanResultIllustration />
+
+                <h2>Scan complete!</h2>
+
+                {result ? (
+                <>
+                    <p className="bs-complete-label">Body type detected</p>
+                    <div className="bs-result-badge">{result.bodyType}</div>
+                    <p className="bs-result-blurb">{result.bodyBlurb}</p>
+
+
+                    <ScanStatsGrid
+                    stats={[
+                        { icon: '📐', value: `${result.symmetry}%`, label: 'Symmetry' },
+                        { icon: '🧘', value: result.posture, label: 'Posture' },
+                        { icon: '✨', value: 'High', label: 'Match Confidence' },
+                    ]}
+                    />
+                </>
+                ) : (
+                <p className="bs-complete-label">Processing results…</p>
+                )}
+            </section>
         )}
       </div>
     </main>
