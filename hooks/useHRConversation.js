@@ -2,9 +2,10 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { voice } from '@/lib/voice'
+import { getInterview, submitInterview } from '@/lib/api'
 
 // Runs the interview: speak a question, listen to the answer, repeat.
-// Questions come from /api/interview, voice from lib/voice.
+// Questions come from the mock backend (lib/api), voice from lib/voice.
 export function useHRConversation() {
   const [state, setState] = useState('idle') // idle | speaking | listening | thinking | done
   const [aiText, setAiText] = useState('')
@@ -25,12 +26,7 @@ export function useHRConversation() {
     runRef.current++
     voice.stop()
     setState('thinking')
-    const res = await fetch('/api/interview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers: {} }),
-    }).then((r) => r.json())
-    setResult(res)
+    setResult(await submitInterview({}))
     setState('done')
   }, [])
 
@@ -45,7 +41,7 @@ export function useHRConversation() {
 
     setResult(null)
     setState('thinking')
-    const { questions, outro } = await fetch('/api/interview').then((r) => r.json())
+    const { questions, outro } = await getInterview()
     setTotal(questions.length)
 
     const answers = {}
@@ -63,11 +59,7 @@ export function useHRConversation() {
     }
 
     if (!alive()) return
-    const res = await fetch('/api/interview', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ answers }),
-    }).then((r) => r.json())
+    const res = await submitInterview(answers)
 
     setStep(questions.length)
     setAiText(outro)

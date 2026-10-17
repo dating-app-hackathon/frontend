@@ -153,8 +153,8 @@ export default function Profile() {
       </section>
 
       <section className="field">
-        <span className="field-label">07 · Who makes you vibe?</span>
-        <p className="field-sub">Stretch the window over every shade you're into.</p>
+        <span className="field-label">07 · Which genders are you into?</span>
+        <p className="field-sub">Same spectrum as above. Stretch the window over every gender you're attracted to.</p>
         <Spectrum value={attraction} every={everyone} onChange={setAttraction} label="Your attraction" />
         <div className="swatch-row">
           <span
@@ -165,7 +165,7 @@ export default function Profile() {
           />
           <div>
             <strong>{everyone ? 'Every colour 🌈' : `${shadeName(attraction[0])} → ${shadeName(attraction[1])}`}</strong>
-            <small>your vibe range</small>
+            <small>genders you're into</small>
           </div>
           <button
             type="button"

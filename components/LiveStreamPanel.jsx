@@ -49,7 +49,7 @@ export default function LiveStreamPanel() {
   // 2. Load face-api models
   useEffect(() => {
     async function loadModels() {
-      const MODEL_URL = '/models'
+      const MODEL_URL = `${process.env.NEXT_PUBLIC_BASE_PATH}/models` // served from public/models
       await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL)
       await faceapi.nets.faceExpressionNet.loadFromUri(MODEL_URL)
       setModelsLoaded(true)

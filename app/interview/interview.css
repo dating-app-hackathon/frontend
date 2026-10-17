@@ -234,7 +234,7 @@
 }
 .iv-end:active { transform: scale(0.92); }
 
-/* dev-only skip button, tucked to the right of the end button */
+/* skip button (demos/testing), tucked to the right of the end button */
 .iv-skip {
   position: absolute;
   right: 20px;

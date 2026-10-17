@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import dynamic from 'next/dynamic'
+import { submitBodyScan } from '@/lib/api'
 import './bodyscan.css'
 
 import ScanResultIllustration from '../../components/ScanResultIllustration'
@@ -160,17 +161,9 @@ export default function BodyScan() {
     setResult(DEFAULT_SCAN_RESULT)
 
     try {
-      const res = await fetch('/api/bodyscan', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ completed: true }),
-      })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (data?.bodyType && data?.bodyBlurb) {
-          setResult(data)
-        }
+      const data = await submitBodyScan()
+      if (data?.bodyType && data?.bodyBlurb) {
+        setResult(data)
       }
     } catch {
       // The scan is considered complete even if the optional result request fails.

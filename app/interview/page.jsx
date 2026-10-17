@@ -17,8 +17,6 @@ import './interview.css'
 
 const LiveStreamPanel = dynamic(() => import('@/components/LiveStreamPanel'), { ssr: false })
 
-const DEV = process.env.NODE_ENV === 'development'
-
 const STATE_LABEL = {
   speaking: 'Talking…',
   listening: 'Your turn, go ahead',
@@ -36,9 +34,9 @@ export default function Interview() {
   const [started, setStarted] = useState(false)
   const live = started && state !== 'done'
 
-  // Dev-only escape hatch: Esc (or the skip button) jumps to the result
+  // Escape hatch for demos and testing: Esc (or the skip button) jumps to the result
   useEffect(() => {
-    if (!DEV || !live) return
+    if (!live) return
     const onKey = (e) => e.key === 'Escape' && skip()
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -136,7 +134,7 @@ export default function Interview() {
             Start the vibe check <span>→</span>
           </button>
         )}
-        {live && DEV && (
+        {live && (
           <button className="iv-skip" onClick={skip}>
             Skip to result ⏭ <kbd>esc</kbd>
           </button>

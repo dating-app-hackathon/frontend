@@ -91,14 +91,14 @@ export default function Me() {
 
       <section className="app-card me-colours">
         <div>
-          <h3 className="me-label">My shade</h3>
+          <h3 className="me-label">My gender shade</h3>
           <div className="me-shade">
             <span style={{ background: genderColour }} />
             {p.gender === 'every' ? 'Every colour 🌈' : shadeName(p.gender)}
           </div>
         </div>
         <div>
-          <h3 className="me-label">I vibe with</h3>
+          <h3 className="me-label">Attracted to</h3>
           <div
             className="me-range"
             style={{
