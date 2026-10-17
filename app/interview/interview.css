@@ -1,0 +1,68 @@
+/* Wireframe styles for /interview: everything scoped under .interview */
+
+.interview {
+  min-height: 100vh;
+  padding: 20px 20px 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.iv-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.iv-back { color: inherit; text-decoration: none; font-size: 22px; }
+.iv-title { font-family: var(--display); font-weight: 800; }
+.iv-count { color: var(--muted); font-size: 14px; min-width: 22px; text-align: right; }
+
+.iv-progress { height: 4px; background: #2a2a30; border-radius: 4px; overflow: hidden; }
+.iv-progress span { display: block; height: 100%; background: var(--pink); transition: width 0.3s; }
+
+.interview small { color: var(--muted); font-size: 12px; letter-spacing: 1px; }
+
+.iv-box {
+  border: 2px dashed #3a3a42;
+  border-radius: 16px;
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 13px;
+  text-align: center;
+}
+.iv-media { height: 200px; }
+.iv-result { padding: 40px 20px; gap: 8px; }
+
+.iv-question h2 { font-family: var(--display); font-size: 24px; margin-top: 6px; }
+
+.iv-options { display: grid; gap: 10px; }
+.iv-option {
+  padding: 16px;
+  border: 1.5px solid #3a3a42;
+  border-radius: 14px;
+  text-align: left;
+}
+.iv-option.selected { border-color: var(--pink); color: var(--pink); }
+
+.iv-footer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+}
+.iv-next {
+  width: 100%;
+  padding: 18px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+}
+.iv-next:disabled { opacity: 0.3; }
+
+.iv-loading { color: var(--muted); text-align: center; }
