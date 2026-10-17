@@ -33,14 +33,34 @@ button { font: inherit; color: inherit; border: 0; background: none; cursor: poi
   overflow-x: hidden;
 }
 
-.placeholder {
-  color: inherit;
-  text-decoration: none;
-  min-height: 100vh;
-  display: grid;
-  place-content: center;
-  text-align: center;
-  font-family: var(--display);
-  gap: 8px;
+/* ---------- sticky CTA (shared) ---------- */
+.cta-bar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom));
+  background: linear-gradient(transparent, var(--ink) 40%);
 }
-.placeholder small { font-family: var(--body); color: var(--muted); }
+.cta {
+  text-decoration: none;
+  width: 100%;
+  padding: 20px;
+  border-radius: 999px;
+  background: var(--pink);
+  color: var(--ink);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 18px;
+  text-transform: uppercase;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 10px 30px rgba(253, 66, 105, 0.45);
+  transition: transform 0.15s;
+}
+.cta:active { transform: scale(0.97); }
+.cta span { transition: transform 0.2s; }
+.cta:hover span { transform: translateX(4px); }
