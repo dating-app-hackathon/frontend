@@ -83,8 +83,11 @@ export default function BodyScanCamera({ active, onPoseUpdate }) {
         if (kp.score > 0.3) {
           ctx.beginPath()
           ctx.arc(kp.x, kp.y, 5, 0, 2 * Math.PI)
-          ctx.fillStyle = '#00ff88'
+          ctx.fillStyle = '#ffffff'
           ctx.fill()
+          ctx.strokeStyle = '#fd4269'
+          ctx.lineWidth = 2
+          ctx.stroke()
         }
       })
 
@@ -98,7 +101,7 @@ export default function BodyScanCamera({ active, onPoseUpdate }) {
           ctx.beginPath()
           ctx.moveTo(kp1.x, kp1.y)
           ctx.lineTo(kp2.x, kp2.y)
-          ctx.strokeStyle = '#00ff88'
+          ctx.strokeStyle = '#fd4269'
           ctx.lineWidth = 3
           ctx.stroke()
         }
@@ -118,9 +121,8 @@ export default function BodyScanCamera({ active, onPoseUpdate }) {
     <div
       style={{
         position: 'relative',
-        width: dims.width,
-        height: dims.height,
-        margin: '0 auto',
+        width: '100%',
+        aspectRatio: `${dims.width} / ${dims.height}`,
       }}
     >
       <video
@@ -135,7 +137,6 @@ export default function BodyScanCamera({ active, onPoseUpdate }) {
           width: '100%',
           height: '100%',
           objectFit: 'cover',
-          borderRadius: '10px',
           background: '#000',
         }}
       />
@@ -154,12 +155,12 @@ export default function BodyScanCamera({ active, onPoseUpdate }) {
         }}
       />
       {!ready && !error && (
-        <p style={{ position: 'absolute', bottom: 4, left: 4, fontSize: 12, color: '#999' }}>
+        <p style={{ position: 'absolute', bottom: 10, left: 12, fontSize: 12, color: '#fff', opacity: 0.8 }}>
           Loading pose model…
         </p>
       )}
       {error && (
-        <p style={{ position: 'absolute', bottom: 4, left: 4, fontSize: 12, color: '#ff5555' }}>
+        <p style={{ position: 'absolute', bottom: 10, left: 12, right: 12, fontSize: 12, color: '#ff8aa3' }}>
           {error}
         </p>
       )}

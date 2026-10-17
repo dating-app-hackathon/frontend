@@ -23,7 +23,7 @@ export default function Bio() {
     e.preventDefault()
     setSaving(true)
     await saveProfile({ bio: bio.trim() })
-    router.push('/interview')
+    router.push('/bodyscan')
   }
 
   return (

@@ -7,8 +7,6 @@ import './bodyscan.css'
 
 import ScanResultIllustration from '../../components/ScanResultIllustration'
 import ScanStatsGrid from '../../components/ScanStatsGrid'
-
-
 import BodyFigureProgress from '../../components/BodyFigureProgress'
 
 const BodyScanCamera = dynamic(() => import('../../components/BodyScanCamera'), {
@@ -174,81 +172,100 @@ export default function BodyScan() {
   }
 
   return (
-    <main className="bodyscan">
+    <main className={`bodyscan ${phase}`}>
       <header className="bs-top">
-        <Link href="/" className="bs-back">←</Link>
-        <span className="bs-title">Body Scan</span>
-        <span />
+        <Link href="/bio" className="bs-back">←</Link>
+        <span className="bs-title">Body scan</span>
+        <span className="bs-step">
+          {phase === 'positioning' && '1/2'}
+          {phase === 'scanning' && '2/2'}
+        </span>
       </header>
 
-      <div className="bs-content">
+      {phase === 'intro' && (
+        <section className="bs-intro">
+          <div className="bs-intro-figure">
+            <ScanResultIllustration />
+          </div>
+          <h1>
+            Full body
+            <br />
+            <span className="pink">scan.</span>
+          </h1>
+          <p>Not for looks. For how you move and carry yourself. It stays private and only sharpens your syncs.</p>
+          <ul>
+            {[
+              ['📏', 'Stand about 1.5 m away', 'Prop your phone up somewhere steady.'],
+              ['🖼️', 'Whole body in frame', 'Head to feet, nothing cropped.'],
+              ['🔄', 'Turn slowly, 360°', 'One full circle and you are done.'],
+            ].map(([emoji, title, sub]) => (
+              <li key={title}>
+                <span>{emoji}</span>
+                <div>
+                  <strong>{title}</strong>
+                  <small>{sub}</small>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      {(phase === 'positioning' || phase === 'scanning') && (
+        <section className="bs-scan">
+          <h2>{phase === 'positioning' ? 'Step back until we see all of you' : 'Now turn slowly, all the way round'}</h2>
+          <p>
+            {phase === 'positioning'
+              ? 'About 1.5 m from the camera, head to feet in frame.'
+              : 'Keep turning in a full circle until the figure fills up.'}
+          </p>
+
+          <div className="bs-camera">
+            <BodyScanCamera active={true} onPoseUpdate={handlePoseUpdate} />
+            {phase === 'scanning' && <BodyFigureProgress percent={percent} />}
+          </div>
+
+          {phase === 'positioning' && (
+            <p className={`bs-status ${fullBodyDetected ? 'ok' : ''}`}>
+              {fullBodyDetected ? '✓ Got you! Get ready to turn…' : 'Looking for you…'}
+            </p>
+          )}
+        </section>
+      )}
+
+      {phase === 'complete' && (
+        <section className="bs-complete">
+          <ScanResultIllustration />
+          <small>Scan complete</small>
+
+          {result ? (
+            <>
+              <h2>{result.bodyType}</h2>
+              <p className="bs-result-blurb">{result.bodyBlurb}</p>
+              <ScanStatsGrid
+                stats={[
+                  { icon: '📐', value: `${result.symmetry}%`, label: 'Symmetry' },
+                  { icon: '🧘', value: result.posture, label: 'Posture' },
+                  { icon: '✨', value: 'High', label: 'Sync confidence' },
+                ]}
+              />
+            </>
+          ) : (
+            <p className="bs-result-blurb">Processing your scan…</p>
+          )}
+        </section>
+      )}
+
+      <div className="cta-bar">
         {phase === 'intro' && (
-          <section className="bs-box bs-intro">
-            <div className="bs-icon-circle">🧍</div>
-            <h2>Are you ready to do the full body scan?</h2>
-            <p>We'll use your camera to capture your body shape. This stays private and is only used to improve your matches.</p>
-            <button className="bs-btn" onClick={startPositioning}>
-              Start
-            </button>
-          </section>
+          <button className="cta" onClick={startPositioning}>
+            Start the scan <span>→</span>
+          </button>
         )}
-
-        {(phase === 'positioning' || phase === 'scanning') && (
-          <section className="bs-box bs-scan-section">
-            {phase === 'positioning' && (
-              <>
-                <h3>Stand about 1.5 meters away from the camera</h3>
-                <p>Make sure your whole body — head to feet — is visible in frame.</p>
-              </>
-            )}
-
-            {phase === 'scanning' && (
-              <>
-                <h3>Slowly turn around 360°</h3>
-                <p>Keep turning in a full circle until the scan completes.</p>
-              </>
-            )}
-
-            <div className="bs-scan-row">
-              <BodyScanCamera active={true} onPoseUpdate={handlePoseUpdate} />
-              {phase === 'scanning' && <BodyFigureProgress percent={percent} />}
-            </div>
-
-            {phase === 'positioning' && (
-              <p className={`bs-status ${fullBodyDetected ? 'ok' : ''}`}>
-                {fullBodyDetected
-                  ? '✅ Full body detected — get ready to turn…'
-                  : 'Waiting for full body to be visible…'}
-              </p>
-            )}
-          </section>
-        )}
-
-        {phase === 'complete' && (
-            <section className="bs-box bs-complete">
-                <ScanResultIllustration />
-
-                <h2>Scan complete!</h2>
-
-                {result ? (
-                <>
-                    <p className="bs-complete-label">Body type detected</p>
-                    <div className="bs-result-badge">{result.bodyType}</div>
-                    <p className="bs-result-blurb">{result.bodyBlurb}</p>
-
-
-                    <ScanStatsGrid
-                    stats={[
-                        { icon: '📐', value: `${result.symmetry}%`, label: 'Symmetry' },
-                        { icon: '🧘', value: result.posture, label: 'Posture' },
-                        { icon: '✨', value: 'High', label: 'Match Confidence' },
-                    ]}
-                    />
-                </>
-                ) : (
-                <p className="bs-complete-label">Processing results…</p>
-                )}
-            </section>
+        {phase === 'complete' && result && (
+          <Link href="/interview" className="cta">
+            Next: the vibe check <span>→</span>
+          </Link>
         )}
       </div>
     </main>

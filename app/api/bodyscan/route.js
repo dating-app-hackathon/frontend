@@ -1,5 +1,7 @@
 export const dynamic = 'force-dynamic'
 
+import { db } from '@/lib/db'
+
 const BODY_TYPES = [
   { label: 'Huggable', blurb: 'The kind of presence people want to wrap their arms around.' },
   { label: 'Cute-as-a-Button', blurb: 'Effortlessly adorable, inside and out.' },
@@ -26,11 +28,13 @@ export async function POST(req) {
   const symmetry =
     SYMMETRY_RANGE[0] + Math.floor(Math.random() * (SYMMETRY_RANGE[1] - SYMMETRY_RANGE[0]))
 
-  return Response.json({
+  const result = {
     bodyType: picked.label,
     bodyBlurb: picked.blurb,
     posture,
     symmetry,
     completedAt: Date.now(),
-  })
+  }
+  db.profile.bodyscan = result
+  return Response.json(result)
 }

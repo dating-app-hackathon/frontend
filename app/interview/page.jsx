@@ -57,7 +57,7 @@ export default function Interview() {
   return (
     <main className={`interview ${live ? 'live' : ''} ${!started ? 'intro' : ''}`}>
       <header className="iv-top">
-        <Link href="/bio" className="iv-back">←</Link>
+        <Link href="/bodyscan" className="iv-back">←</Link>
         {live ? (
           <span className="iv-live">
             <i /> LIVE
