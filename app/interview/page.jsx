@@ -5,7 +5,50 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import dynamic from 'next/dynamic'
 import './interview.css'
+
+import HRBlob from '../../components/HRBlob'
+import { useHRConversation } from '../../hooks/useHRConversation'
+import '../../components/hr-blob.css'
+
+
+const LiveStreamPanel = dynamic(() => import('../../components/LiveStreamPanel'), {
+  ssr: false,
+})
+
+function VirtualHRSection() {
+  const { state, transcript, aiText, start } = useHRConversation()
+  const [started, setStarted] = useState(false)
+
+  return (
+    <section className="iv-box iv-hr">
+      <HRBlob state={state} />
+
+      <p className="hr-state-label">
+        {state === 'speaking' && 'HR is speaking...'}
+        {state === 'listening' && 'Listening — go ahead...'}
+        {state === 'thinking' && 'Thinking...'}
+        {state === 'idle' && !started && 'Ready to begin'}
+      </p>
+
+      {aiText && <p className="hr-ai-text">"{aiText}"</p>}
+      {transcript && <p className="hr-transcript">You: {transcript}</p>}
+
+      {!started && (
+        <button
+          className="iv-next"
+          onClick={() => {
+            setStarted(true)
+            start()
+          }}
+        >
+          Start Conversation
+        </button>
+      )}
+    </section>
+  )
+}
 
 export default function Interview() {
   const [questions, setQuestions] = useState([])
@@ -44,6 +87,8 @@ export default function Interview() {
         <span style={{ width: `${questions.length ? ((step + 1) / questions.length) * 100 : 0}%` }} />
       </div>
 
+      <VirtualHRSection />
+
       {result ? (
         <section className="iv-box iv-result">
           <small>[ RESULT ]</small>
@@ -80,6 +125,7 @@ export default function Interview() {
           </div>
         </>
       )}
+      <LiveStreamPanel />
     </main>
   )
 }
